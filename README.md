@@ -1,7 +1,7 @@
 # Sympify-rc-form-taro
 这是照着rc-form写的一个简化版的form组件
-  rc-form地址：https://github.com/react-component/form.git
-  上面有一小部分功能与rc-form基本一致，由于Taro小程序的相关限制，有一些功能没有办法实现
+## rc-form地址：https://github.com/react-component/form.git
+上面有一小部分功能与rc-form基本一致，由于Taro小程序的相关限制，有一些功能没有办法实现
 
 ## API
 
@@ -9,9 +9,10 @@
 
 表单集合父元素
 #### props: 
-* restProps 额外props
-* name 表单的名称（必填，与对应的createFieldsStore参数name相同）
-* renderForm 表单字段的渲染方法
+* restProps: 额外props
+* name: 表单的名称（必填，与对应的createFieldsStore参数name相同）
+* renderForm: 表单字段的渲染方法
+
 ```javascript
   import { BaseForm, createFieldsStore } from './src'
   import Taro from '@tarojs/taro
@@ -42,7 +43,7 @@
   }
 ```
 ### createFieldsStore
-创建表单字段的存储store
+* 创建表单字段的存储store
 ``createFieldsStore(name, options, fields)``
 
 * name 与表单字段对应的名称
@@ -52,20 +53,24 @@
 
 * fields 可先行向store中预放初始值
 
-``let store = createFieldsStore('form')``
-    store (功能与rc-form类似)
-      {
-        getFieldsValue
-        getFieldValue
-        setFieldsValue
-        setFields
-        setFieldsInitialValue
-        getFieldProps
-        getFieldsError
-        validateFields
-        resetFields
-        getOnChangeValue
-      }
+```javascript
+let store = createFieldsStore('form')
+/*
+  store (功能与rc-form类似)
+  {
+    getFieldsValue
+    getFieldValue
+    setFieldsValue
+    setFields
+    setFieldsInitialValue
+    getFieldProps
+    getFieldsError
+    validateFields
+    resetFields
+    getOnChangeValue
+  }
+*/
+```
 
 ### deleteFieldsStore
 * 删除store
@@ -91,9 +96,9 @@
     return e
   }
 ```
-    关于Taro
-      taro原生表单的获取value都是通过e.target.value
-      taro-ui中的表单获取value的事件结果直接为value，除了textarea为e.target.value, picker为e.detail.value
+* 关于Taro
+  taro原生表单的获取value都是通过e.target.value
+  taro-ui中的表单获取value的事件结果直接为value，除了textarea为e.target.value, picker为e.detail.value
 
 ## 相关依赖
   async-validator
