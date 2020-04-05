@@ -11,7 +11,6 @@
 #### props: 
 * restProps: 额外props
 * name: 表单的名称（必填，与对应的createFieldsStore参数name相同）
-* renderForm: 表单字段的渲染方法
 
 ```javascript
   import { BaseForm, createFieldsStore } from './src'
@@ -24,20 +23,19 @@
       <View>
         <BaseForm
           name='form'
-          renderForm={
-            <View>
-              <Input
-                onInput={fieldsStore.getFieldsProps('input', 'onChange', {
-                  initialValue: 'hello world'
-                  rules=[{
-                    required: true
-                  }]
-                })}
-                onInput={fieldsStore.getFieldValue('input')}
-              />
-            </View>
-          }
-        ></BaseForm>
+        >
+          <View>
+            <Input
+              onInput={fieldsStore.getFieldsProps('input', 'onChange', {
+                initialValue: 'hello world'
+                rules=[{
+                  required: true
+                }]
+              })}
+              onInput={fieldsStore.getFieldValue('input')}
+            />
+          </View>
+        </BaseForm>
       </View>
     }
   }
@@ -104,3 +102,5 @@ let store = createFieldsStore('form')
   async-validator
 
 诸多不足，见谅
+
+

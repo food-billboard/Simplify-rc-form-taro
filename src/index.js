@@ -26,7 +26,7 @@ export default class extends Component {
     return (
       <Block>
         {
-          this.props.renderForm
+          this.props.children
         }
       </Block>
     )

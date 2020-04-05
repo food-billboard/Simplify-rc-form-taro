@@ -41,7 +41,6 @@ class FieldsStore {
       this.getOnChangeValue = options.getOnChangeValue.bind(this)
     }
 
-    console.log(this.$forceUpdate)
   }
 
   form = ['getFieldsValue', 'getFieldValue', 'setFieldsValue', 'setFields', 'setFieldsInitialValue', 'getFieldProps', 'getFieldsError', 'validateFields', 'resetFields']
@@ -57,6 +56,12 @@ class FieldsStore {
 
   get getOnChangeValue() {
     return this._getOnChangeValue
+  }
+
+  update() {}
+
+  setUpdate(callback) {
+    this.update = callback
   }
 
   /**
@@ -112,7 +117,6 @@ class FieldsStore {
           value = this.getOnChangeValue(event)
         }
         this.setFieldsValue({[name]: value})
-        //强制更新和验证
       }
     }
     if(!props) return configProps
@@ -180,7 +184,7 @@ class FieldsStore {
       )
     }
 
-    //启动强制更新
+    this.update()
   }
 
   //设置字段的值
