@@ -7,6 +7,12 @@ const OPTIONS_NAME = [ 'validateMessages', 'onFieldsChange', 'onValuesChange', '
 
 class FieldsStore {
 
+  fields
+  fieldsMeta 
+  options
+  name
+  props
+
   constructor(ne, ops, fies) {
 
     let fields,
@@ -43,7 +49,7 @@ class FieldsStore {
 
   }
 
-  form = ['getFieldsValue', 'getFieldValue', 'setFieldsValue', 'setFields', 'setFieldsInitialValue', 'getFieldProps', 'getFieldsError', 'validateFields', 'resetFields']
+  form = ['initializeFields', 'getOnChangeValue', 'setUpdate', 'setProps', 'getFieldsValue', 'getFieldValue', 'setFieldsValue', 'setFields', 'setFieldsInitialValue', 'getFieldProps', 'getFieldsError', 'validateFields', 'resetFields']
 
   //获取表单onChane的vlaue
   _getOnChangeValue = function(e) {
@@ -56,6 +62,10 @@ class FieldsStore {
 
   get getOnChangeValue() {
     return this._getOnChangeValue
+  }
+
+  setProps(props) {
+    this.props = props
   }
 
   update() {}
@@ -75,12 +85,15 @@ class FieldsStore {
       throw new Error('name为必填项')
     }else{
       name = ne
-      if(pr && typeof pr === 'string') {
+      if(fp && typeof fp === 'object') {
         props = pr
         fieldOptions = fp
       }else if(pr && typeof pr === 'object') {
         props = undefined
         fieldOptions = pr
+      }else if(pr && typeof pr === 'string') {
+        props = pr
+        fieldOptions = {}
       }else {
         props = undefined
         fieldOptions = {}
@@ -96,7 +109,7 @@ class FieldsStore {
         name
       }
       if(!!!this.fields[name]) {
-        this.setFields({[name]: {name}})
+        this.setFields({[name]: {name, value: null}})
       }else {
         this.fields[name] = { ...this.fields[name], name }
       }
@@ -150,7 +163,7 @@ class FieldsStore {
   //获取字段的value
   getFieldValue = function(name) {
     this.fields[name] = this.fields[name] || {}
-    return this.fields[name].value ? this.fields[name].value : this.getFieldMeta(name).value
+    return this.fields[name].value ? this.fields[name].value : this.getFieldMeta(name).initialValue
   }
 
   //设置fields
@@ -190,7 +203,7 @@ class FieldsStore {
   //设置字段的值
   setFieldsValue = function(values) {
 
-    const { fields, fieldsMeta } = this
+    const { fields } = this
     const newFields = Object.keys(values).filter(name => {
       return !!fields[name] && !!this.getFieldMeta(name)
     }).reduce((acc, fieldName) => {
@@ -224,7 +237,6 @@ class FieldsStore {
 
   //设置表单字段的初始value
   setFieldsInitialValue = function(initialValues) {
-    const { fieldsMeta } = this
     Object.keys(initialValues).forEach(name => {
       if(this.fieldMeta[name]) {
         const newFieldMeta = {
@@ -234,6 +246,18 @@ class FieldsStore {
         this.setFieldMeta(name, newFieldMeta)
       }
     })
+  }
+
+  //初始化表单字段
+  initializeFields = function(ns) {
+    const { fields } = this
+    const names = ns ? ns : Object.keys(fields)
+    const values = names.reduce((acc, name) => {
+      const {initialValue} = this.getFieldMeta(name)
+      acc[name] = initialValue
+      return acc
+    }, {})
+    this.setFieldsValue(values)
   }
 
   //字段重置
@@ -278,11 +302,17 @@ class FieldsStore {
 
     validator.validate(allValues, options, errors => {
       if(errors && errors.length) {
-        errors.forEach(error => {
+        const { fields } = this
+        const errorFields = errors.reduce((acc, error) => {
           const errorFieldName = error.field
-          this.fields[errorFieldName].errors = this.fields[errorFieldName].errors || []
-          this.fields[errorFieldName].errors.push(error)
-        })
+          const field = fields[errorFieldName]
+          field.errors = field.errors || []
+          field.errors.push(error)
+
+          acc[errorFieldName] = field
+          return acc
+        }, {})
+        this.setFields(errorFields)
       }
 
       if(callback) {
@@ -365,7 +395,7 @@ class FieldsStore {
 
     const rules = this.fieldsMeta[name].rules
     if(Array.isArray(rules) && rules.length) {
-      const validator = new Validate(rules)
+      const validator = new AsyncValidator({name: rules})
       validator.validate((values, options={}, errors) => {
         this.fields[name].errors = []
         if(errors) {
@@ -380,13 +410,13 @@ class FieldsStore {
 
   //获取字段错误
   getFieldsError = function(nes) {
-    const { FieldsMeta, fields } = this
+    const { fields } = this
     //获取全部错误
     if(nes === undefined) {
       return Object.keys(fields).filter(name => {
-        return !!fieldsMeta[name].errors
+        return !!fields[name].errors
       }).reduce((acc, name) => {
-        acc[name] = fieldsMeta.errors
+        acc[name] = fields.errors
         return acc
       }, {})
     }
@@ -394,9 +424,9 @@ class FieldsStore {
     else {
       const names = Array.isArray(nes) ? nes : [ nes ]
       return names.filter(name => {
-        return fields[name] && !!fieldsMeta[name].errors
+        return fields[name] && !!fields[name].errors
       }).reduce((acc, name) => {
-        acc[name] = fieldsMeta[name].errors
+        acc[name] = fields[name].errors
         return acc
       }, {})
     }

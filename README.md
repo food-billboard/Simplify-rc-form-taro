@@ -14,8 +14,8 @@
 
 ```javascript
   import { BaseForm, createFieldsStore } from './src'
-  import Taro from '@tarojs/taro
-  import { View, Input } from '@tarojs/components
+  import Taro from '@tarojs/taro'
+  import { View, Input } from '@tarojs/components'
   const fieldsStore = createFieldsStore('form')
   class Com extends Taro.Component{
     //因为Taro不支持...运算符, 所以需要自行获取相关的属性
@@ -65,9 +65,13 @@ let store = createFieldsStore('form')
     getFieldsError
     validateFields
     resetFields
-    getOnChangeValue
+    getOnChangeValue  
+    initializeFields
+    setUpdate 
+    setProps
   }
 */
+
 ```
 
 ### deleteFieldsStore

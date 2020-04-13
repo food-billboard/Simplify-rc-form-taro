@@ -4,6 +4,8 @@ import { createFieldsStore, getAllFieldsStoreName, deleteFieldsStore } from './f
 
 export default class extends Component {
 
+  fieldsStore
+
   constructor() {
     super(...arguments)
     this.init()
@@ -19,6 +21,7 @@ export default class extends Component {
   init() {
     if(!this.props.name) return
     this.fieldsStore = createFieldsStore(this.props.name)
+    this.fieldsStore.setProps(this.props)
   }
 
   render() {
