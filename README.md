@@ -1,4 +1,4 @@
-# Sympify-rc-form-taro
+# Simplify-rc-form-taro
 这是照着rc-form写的一个简化版的form组件
 ## rc-form地址：https://github.com/react-component/form.git
 上面有一小部分功能与rc-form基本一致，由于Taro小程序的相关限制，有一些功能没有办法实现
